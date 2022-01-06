@@ -1,41 +1,61 @@
-$(document).ready(function () {
-    renderComments();
+let appData;
+
+$(document).ready(async function () {
+    appData = await getAppData();
+    console.log(appData)
+    await renderComments();
+    $("#main__form").submit(function (e) {
+        e.preventDefault();
+        const newComment = {
+            id: $(".comments__comment").length + 1,
+            content: $("#form__comment").val(),
+            createdAt: "Now",
+            score: 0,
+            user: appData.currentUser,
+            replies: []
+        }
+        $(form__comment).val("");
+        appData.comments.push(newComment);
+        renderComments();
+    });
 });
 
-function renderComments(newComment) {
-    $(".main__comments").empty();
+async function getAppData() {
+    const data = $.getJSON("./app/db/data.json")
+        .done(function (data) {
+            return data;
+        })
+        .fail(function () {
+            alert("Could Not Fetch Comments");
+            return null;
+        })
+    return data;
+};
+
+async function renderComments(modifiedData = null) {
     // Ghost elements
     $(".main__comments").append('<div class="comments__ghost flex flex-col gap-4"><div class="h-64 rounded-md bg-grayish-blue opacity-20"></div><div class="h-64 rounded-md bg-grayish-blue opacity-20"></div><div class="h-64 rounded-md bg-grayish-blue opacity-20"></div></div>')
     $.getJSON("./app/db/data.json")
         .done(function (data) {
-            if (newComment) {
-                data.comments.push(newComment);
+            // Adds new comment to data
+            if (modifiedData) {
+                data = modifiedData;
             }
+            // console.log(data);
             $(".main__comments").empty();
             // Display current user's image on the form
             $(".user__avatar").attr("src", data.currentUser.image.webp);
+            // Cycles through comments
             for (let comment of data.comments) {
                 addComment(comment, data.currentUser);
+                // Cycles through replies if there are any
                 if (comment.replies.length) {
-                    $(".main__comments").append(`<div class="flex"><div class="w-2 bg-light-gray mr-4 mb-4"></div><div class="comments__replies flex flex-col"></div></div>`)
+                    $(".main__comments").append(`<div class="flex"><div class="w-2 bg-light-gray mr-4 mb-4"></div><div class="comments__replies flex flex-col"></div></div>`);
                     for (let reply of comment.replies) {
                         addComment(reply, data.currentUser);
                     }
                 }
             }
-            $("#main__form").submit(function (e) {
-                e.preventDefault();
-                const newComment = {
-                    id: data.comments.length + 1,
-                    content: $("#form__comment").val(),
-                    createdAt: "Now",
-                    score: 0,
-                    user: data.currentUser,
-                    replies: []
-                }
-                $(form__comment).val("");
-                renderComments(newComment);
-            });
         })
         .fail(function () {
             alert("Could Not Fetch Comments");
