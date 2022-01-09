@@ -132,13 +132,15 @@ async function renderComments() {
         // Displays the confirm/cancel dialog
         $("main").append(`
             <div class="alert__overlay bg-black opacity-50 fixed top-0 left-0 w-full h-full"></div>
-            <div class="main__alert fixed top-1/2 -translate-y-1/2 bg-white p-6 rounded-md flex flex-col mr-4 gap-4">
-                    <span class="text-xl font-bold text-dark-blue">Delete comment</span>
+            <div class="fixed top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 p-4 w-full max-w-md">
+                <div class="main__alert bg-white p-6 rounded-md flex flex-col gap-4 lg:p-8">
+                    <span class="text-xl font-bold text-dark-blue lg:text-2xl">Delete comment</span>
                     <p class="text-grayish-blue">Are you sure you want to delete this comment? This will remove the comment and can't be undone.</p>
                     <div class="flex gap-3">
                         <button id="alert__cancel" class="bg-grayish-blue text-white w-full py-3 rounded-md uppercase">No, Cancel</button>
                         <button id="alert__confirm" class="bg-soft-red text-white w-full py-3 rounded-md uppercase">Yes, Delete</button>
                     </div>
+                </div>
             </div>`);
 
         // Cancels delete action
