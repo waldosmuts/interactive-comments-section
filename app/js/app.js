@@ -49,7 +49,7 @@ async function renderComments() {
         addComment(comment);
         // Cycles through replies if there are any
         if (comment.replies.length) {
-            $(".main__comments").append(`<div class="replies__section flex"><div class="replies__replyline w-px shrink-0 bg-grayish-blue mr-4 mb-4 opacity-20"></div><div id="replies__${comment.id}" class="comments__replies flex flex-col w-full"></div></div>`);
+            $(".main__comments").append(`<div class="replies__section flex"><div class="replies__replyline w-px shrink-0 bg-grayish-blue mr-4 mb-4 opacity-20 lg:ml-11 lg:mr-9"></div><div id="replies__${comment.id}" class="comments__replies flex flex-col w-full"></div></div>`);
             for (let reply of comment.replies) {
                 addComment(reply);
             }
@@ -67,12 +67,10 @@ async function renderComments() {
 
         // Reply form
         $(this).parents(".comment__card").after(`
-            <div id="reply__form" class="p-4 bg-white rounded-md mb-4 flex flex-col transition duration-400 opacity-100">
-                <textarea id="form__reply" class="border border-light-gray rounded-md w-full h-24 py-3 px-6 font-rubik text-grayish-blue mb-4 focus:outline-light-grayish-blue" placeholder="Add your reply..." required></textarea>
-                <div class="form__bottom flex justify-between items-center">
-                    <img class="h-8" src="./images/avatars/image-juliusomo.webp">
-                    <button id="send__reply" class="uppercase font-rubik bg-moderate-blue text-white py-3 px-6 rounded-md hover:bg-light-grayish-blue">Reply</button>
-                </div>
+            <div id="reply__form" class="p-4 bg-white rounded-md mb-4 flex transition duration-400 opacity-100 justify-between items-center flex-wrap lg:flex-nowrap lg:gap-4 lg:p-6 lg:items-start">
+                <textarea id="form__reply" class="border border-light-gray rounded-md w-full h-24 py-3 px-6 font-rubik text-grayish-blue mb-4 focus:outline-none focus:border-moderate-blue hover:border-moderate-blue caret-moderate-blue lg:mb-0 lg:rounded-xl" placeholder="Add your reply..." required></textarea>
+                <img class="h-8 lg:order-first lg:h-10" src="./images/avatars/image-juliusomo.webp" alt="">
+                <button id="send__reply" class="uppercase font-rubik bg-moderate-blue text-white py-3 px-6 rounded-md hover:bg-light-grayish-blue">Reply</button>
             </div>`);
 
         // Reply form animations
@@ -202,12 +200,10 @@ async function renderComments() {
 
         // Edit form
         $(this).parents(".comment__card").after(`
-            <div id="edit__form" class="p-4 bg-white rounded-md mb-4 flex flex-col transition duration-400 opacity-100">
-                <textarea id="form__edit" class="border border-light-gray rounded-md w-full h-24 py-3 px-6 font-rubik text-grayish-blue mb-4 focus:outline-light-grayish-blue h-64" required>${commentContent}</textarea>
-                <div class="form__bottom flex justify-between items-center">
-                    <img class="h-8" src="./images/avatars/image-juliusomo.webp">
-                    <button id="send__edit" class="uppercase font-rubik bg-moderate-blue text-white py-3 px-6 rounded-md hover:bg-light-grayish-blue">Update</button>
-                </div>
+            <div id="edit__form" class="p-4 bg-white rounded-md mb-4 flex transition duration-400 opacity-100 justify-between items-center flex-wrap lg:flex-nowrap lg:gap-4 lg:p-6 lg:items-start">
+                <textarea id="form__edit" class="border border-light-gray rounded-md w-full h-24 py-3 px-6 font-rubik text-grayish-blue mb-4 focus:outline-none focus:border-moderate-blue hover:border-moderate-blue caret-moderate-blue lg:mb-0 lg:rounded-xl h-32" required>${commentContent}</textarea>
+                <img class="h-8 lg:order-first lg:h-10" src="./images/avatars/image-juliusomo.webp" alt="">
+                <button id="send__edit" class="uppercase font-rubik bg-moderate-blue text-white py-3 px-6 rounded-md hover:bg-light-grayish-blue">Update</button>
             </div>`);
 
         // Edit form animations
@@ -222,17 +218,22 @@ async function renderComments() {
         // Adds reply to comment
         $("#send__edit").click(function (e) {
             e.preventDefault();
+            let commentContent = $("#form__edit").val();
+            if (commentContent === "") {
+                commentContent = "<i>*Removed by user*</i>"
+            }
+
             // Updates appData with edited content
             for (let i = 0; i < appData.comments.length; i++) {
                 if (appData.comments[i].id === commentID) {
-                    appData.comments[i].content = $("#form__edit").val();
+                    appData.comments[i].content = commentContent;
                     renderComments();
                     return;
                 }
                 if (appData.comments[i].replies.length) {
                     for (let j = 0; j < appData.comments[i].replies.length; j++) {
                         if (appData.comments[i].replies[j].id === commentID) {
-                            appData.comments[i].replies[j].content = $("#form__edit").val();
+                            appData.comments[i].replies[j].content = commentContent;
                             renderComments();
                             return;
                         }
@@ -347,7 +348,7 @@ function addComment(comment) {
         ownerTag = '<span class="bg-moderate-blue text-white text-xs font-normal px-2 py-px rounded-sm ml-2">you</span>';
         // Edit, delete actions
         commentActions = `
-            <div class="flex gap-4">
+            <div class="flex gap-4 lg:absolute lg:top-6 lg:right-6">
                 <button class="action__delete font-rubik flex text-soft-red font-bold gap-2 items-center fill-soft-red hover:fill-pale-red hover:text-pale-red">
                     <svg width="12" height="14" xmlns="http://www.w3.org/2000/svg"><path d="M1.167 12.448c0 .854.7 1.552 1.555 1.552h6.222c.856 0 1.556-.698 1.556-1.552V3.5H1.167v8.948Zm10.5-11.281H8.75L7.773 0h-3.88l-.976 1.167H0v1.166h11.667V1.167Z"/></svg>Delete
                 </button>
@@ -358,18 +359,18 @@ function addComment(comment) {
     } else {
         // Reply action
         commentActions = `
-            <button class="action__reply font-rubik flex text-moderate-blue font-bold gap-2 items-center fill-moderate-blue hover:fill-light-grayish-blue hover:text-light-grayish-blue">
+            <button class="action__reply font-rubik flex text-moderate-blue font-bold gap-2 items-center fill-moderate-blue hover:fill-light-grayish-blue hover:text-light-grayish-blue lg:absolute lg:top-6 lg:right-6">
                 <svg width="14" height="13" xmlns="http://www.w3.org/2000/svg"><path d="M.227 4.316 5.04.16a.657.657 0 0 1 1.085.497v2.189c4.392.05 7.875.93 7.875 5.093 0 1.68-1.082 3.344-2.279 4.214-.373.272-.905-.07-.767-.51 1.24-3.964-.588-5.017-4.829-5.078v2.404c0 .566-.664.86-1.085.496L.227 5.31a.657.657 0 0 1 0-.993Z"/></svg>Reply
             </button>`;
     }
 
     // Checks if comment score has been rated by user
-    let commentScore = `<button class="action__upvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue">+</button> ${comment.score} <button class="action__downvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue">-</button>`;
+    let commentScore = `<button class="action__upvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue lg:text-lg">+</button> ${comment.score} <button class="action__downvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue lg:text-lg">-</button>`;
     if (comment.rating) {
         if (comment.rating === 1) {
-            commentScore = `<button class="action__upvote font-rubik font-bold text-moderate-blue">+</button> ${comment.score + 1} <button class="action__downvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue">-</button>`;
+            commentScore = `<button class="action__upvote font-rubik font-bold text-moderate-blue lg:text-lg">+</button> ${comment.score + 1} <button class="action__downvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue lg:text-lg">-</button>`;
         } else if (comment.rating === -1) {
-            commentScore = `<button class="action__upvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue">+</button> ${comment.score - 1} <button class="action__downvote font-rubik font-bold text-moderate-blue">-</button>`;
+            commentScore = `<button class="action__upvote font-rubik font-bold text-light-grayish-blue hover:text-moderate-blue lg:text-lg">+</button> ${comment.score - 1} <button class="action__downvote font-rubik font-bold text-moderate-blue lg:text-lg">-</button>`;
         } else {
             commentScore = commentScore;
         }
@@ -377,15 +378,17 @@ function addComment(comment) {
 
     // Appends the comment/reply
     commentSection.append(`
-            <div id="comment__${commentID}" class="${commentClass} comment__card p-4 mb-4 bg-white rounded-md flex flex-col gap-4">
-                <div class="flex items-center gap-4">
-                    <img class="h-8" src="${comment.user.image.webp}">
-                    <span class="username text-dark-blue font-bold">${comment.user.username}${ownerTag}</span>
-                    <span class="text-grayish-blue">${comment.createdAt}</span>
+            <div id="comment__${commentID}" class="${commentClass} comment__card p-4 mb-4 bg-white rounded-md flex flex-col gap-4 lg:relative lg:p-6 lg:flex-row lg:gap-6">
+                <div class="flex flex-col gap-4">
+                    <div class="flex items-center gap-4">
+                        <img class="h-8" src="${comment.user.image.webp}">
+                        <span class="username text-dark-blue font-bold">${comment.user.username}${ownerTag}</span>
+                        <span class="text-grayish-blue">${comment.createdAt}</span>
+                    </div>
+                    <p class="comment__body text-grayish-blue">${replyTag}${comment.content}</p>
                 </div>
-                <p class="comment__body text-grayish-blue">${replyTag}${comment.content}</p>
-                <div class="comment__action flex justify-between">
-                    <div class="font-bold text-moderate-blue flex items-center gap-4 py-2 px-4 bg-very-light-gray rounded-lg">${commentScore}</div>
+                <div class="comment__action flex justify-between lg:order-first lg:items-start">
+                    <div class="font-bold text-moderate-blue flex items-center gap-4 py-2 px-4 bg-very-light-gray rounded-lg lg:flex-col lg:gap-1 lg:rounded-xl lg:py-0 lg:px-0 lg:w-10">${commentScore}</div>
                     ${commentActions}
                 </div>
             </div>`);
