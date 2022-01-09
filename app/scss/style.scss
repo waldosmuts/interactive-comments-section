@@ -6,6 +6,18 @@ body {
     }
 }
 
+textarea {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+// .replies__replyline {
+//     width: 4px;
+// }
+
 .attribution {
     font-size: 11px;
     text-align: center;
